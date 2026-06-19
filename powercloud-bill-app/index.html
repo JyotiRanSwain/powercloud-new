@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="images/powercloud_bill_logo.png" type="image/png">
+<title>PowerCloud Bill — GST Billing Software for Indian Businesses</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#faf8f4;--surface:#f2ede4;--card:#ffffff;--ink:#0d1117;
+  --border:#e4dfd5;--accent:#ff5c1a;--accent2:#ffc94d;--blue:#1a6fff;
+  --green:#00b87a;--muted:#6b7280;--font-head:'Syne',sans-serif;--font-body:'Space Grotesk',sans-serif;--r:16px;--shadow:0 8px 40px rgba(13,17,23,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);overflow-x:hidden;line-height:1.6;cursor:none;}
+a{text-decoration:none;color:inherit;}
+img{display:block;max-width:100%;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:52px 52px;opacity:.35;pointer-events:none;z-index:0;}
+
+/* ── CUSTOM CURSOR (same as PowerCloud) ── */
+#cursor-dot{position:fixed;top:0;left:0;width:8px;height:8px;background:#ff5c1a;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .08s;}
+#cursor-ring{position:fixed;top:0;left:0;width:36px;height:36px;border:1.5px solid rgba(255,92,26,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s;}
+#cursor-ring.hovered{width:54px;height:54px;border-color:rgba(255,92,26,.85);}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:500;background:rgba(250,248,244,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);height:64px;padding:0 clamp(16px,5vw,60px);display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo img{height:34px;width:auto;border-radius:7px;object-fit:contain;}
+.logo-text{font-family:var(--font-head);font-weight:800;font-size:1.08rem;color:var(--ink);}
+.logo-text span{color:var(--accent);}
+.hdr-links{display:flex;align-items:center;gap:24px;list-style:none;}
+.hdr-links a{font-size:.84rem;font-weight:500;color:var(--muted);transition:color .2s;}
+.hdr-links a:hover{color:var(--ink);}
+.dl-btn{background:var(--accent);color:#fff;font-family:var(--font-head);font-weight:700;font-size:.82rem;padding:9px 20px;border-radius:50px;transition:transform .2s,box-shadow .2s;white-space:nowrap;cursor:none;}
+.dl-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,92,26,.35);}
+.ham{display:none;flex-direction:column;gap:5px;cursor:none;background:none;border:none;padding:4px;}
+.ham span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;}
+.mob-nav{display:none;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:499;}
+.mob-nav.open{display:flex;}
+.mob-nav a{padding:12px 24px;font-size:.88rem;color:var(--muted);border-bottom:1px solid var(--border);}
+
+/* ── SCROLL ANIMATION SECTION ── */
+#scroll-anim{position:relative;height:3200px;}
+.scroll-sticky{position:sticky;top:0;width:100%;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--ink);}
+#billCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
+
+.hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 28px;pointer-events:none;z-index:10;transition:opacity .1s;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:6px 16px;font-size:.72rem;font-weight:500;color:rgba(255,255,255,.7);margin-bottom:22px;backdrop-filter:blur(6px);}
+.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{opacity:1;}50%{opacity:.4;}}
+.hero-h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,4.2rem);font-weight:800;color:#fff;line-height:1.08;margin-bottom:16px;text-shadow:0 4px 28px rgba(0,0,0,.5);}
+.hi{color:var(--accent);position:relative;display:inline-block;}
+.hi::after{content:'';position:absolute;left:0;bottom:4px;width:100%;height:7px;background:var(--accent2);border-radius:3px;z-index:-1;opacity:.35;}
+.hero-p{font-size:clamp(.9rem,2vw,1.08rem);color:rgba(255,255,255,.65);max-width:500px;margin-bottom:30px;line-height:1.7;}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;pointer-events:all;}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border-radius:50px;font-family:var(--font-head);font-weight:700;font-size:.88rem;cursor:none;transition:all .25s;border:none;}
+.btn-dark{background:#fff;color:var(--ink);}
+.btn-dark:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.2);}
+.btn-outline-w{background:transparent;border:1.5px solid rgba(255,255,255,.25);color:#fff;}
+.btn-outline-w:hover{border-color:#fff;}
+.btn-accent{background:var(--accent);color:#fff;box-shadow:0 0 28px rgba(255,92,26,.3);}
+.btn-accent:hover{background:#e84f10;transform:translateY(-2px);}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink);}
+.btn-outline:hover{border-color:var(--ink);}
+.btn-wa{background:#25d366;color:#fff;}
+.btn-wa:hover{background:#1db954;transform:translateY(-2px);}
+.win-badge{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.76rem;color:rgba(255,255,255,.5);pointer-events:none;}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;color:rgba(255,255,255,.35);font-size:.7rem;font-family:var(--font-head);letter-spacing:.1em;text-transform:uppercase;animation:sb 2s ease-in-out infinite;}
+@keyframes sb{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(5px);}}
+.scroll-arr{width:18px;height:18px;border-right:1.5px solid rgba(255,255,255,.3);border-bottom:1.5px solid rgba(255,255,255,.3);transform:rotate(45deg);margin-top:-3px;}
+
+/* ── SECTIONS ── */
+.section{padding:clamp(60px,7vw,100px) clamp(16px,5vw,60px);position:relative;z-index:1;}
+.max-w{max-width:1180px;margin:0 auto;}
+.s-label{display:inline-block;font-family:var(--font-head);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);background:rgba(255,92,26,.08);padding:5px 13px;border-radius:50px;margin-bottom:13px;}
+.s-title{font-family:var(--font-head);font-size:clamp(1.7rem,3.8vw,2.7rem);font-weight:800;line-height:1.12;margin-bottom:15px;}
+.s-sub{color:var(--muted);font-size:.93rem;max-width:520px;line-height:1.7;}
+.center{text-align:center;}.center .s-sub{margin:0 auto;}
+
+/* stats */
+.stats-bar{display:flex;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;width:100%;max-width:680px;margin:0 auto;box-shadow:var(--shadow);}
+.stat{flex:1;min-width:130px;padding:20px;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:var(--font-head);font-size:1.5rem;font-weight:800;color:var(--accent);}
+.stat-lbl{font-size:.73rem;color:var(--muted);margin-top:3px;}
+
+/* why */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:16px;margin-top:44px;}
+.wcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px;position:relative;overflow:hidden;transition:all .3s;}
+.wcard::before{content:attr(data-n);position:absolute;top:-8px;right:13px;font-family:var(--font-head);font-size:5rem;font-weight:800;color:rgba(255,92,26,.05);line-height:1;}
+.wcard:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.wico{width:44px;height:44px;border-radius:11px;background:rgba(255,92,26,.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:1.25rem;}
+.wcard h3{font-family:var(--font-head);font-size:.97rem;font-weight:700;margin-bottom:7px;}
+.wcard p{font-size:.84rem;color:var(--muted);line-height:1.65;}
+
+/* features dark */
+#features{background:var(--ink);color:#fff;}
+#features .s-title{color:#fff;}
+#features .s-sub{color:rgba(255,255,255,.45);}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden;margin-top:44px;}
+.fcard{background:var(--ink);padding:26px 22px;transition:background .2s;}
+.fcard:hover{background:#141c24;}
+.fico{font-size:1.5rem;margin-bottom:12px;}
+.fcard h3{font-family:var(--font-head);font-size:.9rem;font-weight:700;color:#fff;margin-bottom:7px;}
+.fcard p{font-size:.78rem;color:rgba(255,255,255,.42);line-height:1.6;}
+
+/* screenshots */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:14px;margin-top:44px;}
+.gitem{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:var(--card);cursor:zoom-in;position:relative;aspect-ratio:16/10;box-shadow:var(--shadow);}
+.gitem img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
+.gitem:hover img{transform:scale(1.04);}
+.gover{position:absolute;inset:0;background:rgba(13,17,23,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;}
+.gitem:hover .gover{opacity:1;}
+.lb{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:18px;}
+.lb.open{display:flex;}
+.lb img{max-width:90vw;max-height:88vh;border-radius:10px;object-fit:contain;}
+.lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.15);border:none;cursor:none;color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem;display:flex;align-items:center;justify-content:center;}
+.lb-close:hover{background:rgba(255,255,255,.3);}
+
+/* pricing */
+#pricing{background:linear-gradient(180deg,var(--bg),var(--surface));}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:44px;}
+.plan{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:30px 26px;position:relative;transition:all .3s;}
+.plan:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.plan.pop{border-color:var(--accent);background:var(--ink);color:#fff;}
+.pop-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-family:var(--font-head);font-size:.67rem;font-weight:700;letter-spacing:.08em;padding:4px 13px;border-radius:50px;text-transform:uppercase;white-space:nowrap;}
+.plan-name{font-family:var(--font-head);font-size:.73rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;}
+.plan.pop .plan-name{color:rgba(255,255,255,.45);}
+.plan-price{font-family:var(--font-head);font-size:2.2rem;font-weight:800;}
+.plan-price sub{font-size:.9rem;font-weight:400;color:var(--muted);}
+.plan.pop .plan-price sub{color:rgba(255,255,255,.4);}
+.plan-desc{font-size:.81rem;color:var(--muted);margin-top:7px;}
+.plan.pop .plan-desc{color:rgba(255,255,255,.45);}
+.plan-perks{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:9px;}
+.plan-perks li{font-size:.82rem;display:flex;align-items:center;gap:8px;}
+.plan-perks li::before{content:'✓';width:19px;height:19px;border-radius:50%;background:rgba(255,92,26,.1);color:var(--accent);font-size:.67rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.plan.pop .plan-perks li::before{background:rgba(255,92,26,.25);}
+.plan-cta{display:block;text-align:center;margin-top:24px;padding:12px;border-radius:50px;font-family:var(--font-head);font-weight:700;font-size:.83rem;border:1.5px solid var(--border);color:var(--ink);transition:all .2s;cursor:none;}
+.plan-cta:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.plan.pop .plan-cta{background:var(--accent);color:#fff;border-color:var(--accent);}
+.plan.pop .plan-cta:hover{background:#e84f10;}
+
+/* buy modal */
+.modal-bg{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.62);backdrop-filter:blur(8px);align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--card);border-radius:18px;width:100%;max-width:760px;position:relative;box-shadow:0 36px 90px rgba(0,0,0,.28);animation:mIn .3s ease both;margin:auto;overflow:hidden;}
+@keyframes mIn{from{opacity:0;transform:scale(.93) translateY(18px);}to{opacity:1;transform:none;}}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--surface);border:none;cursor:none;color:var(--muted);width:34px;height:34px;border-radius:50%;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+.mcols{display:flex;flex-wrap:wrap;}
+.ml{flex:1;min-width:250px;padding:clamp(20px,4vw,38px);border-right:1px solid var(--border);}
+.mr{width:250px;min-width:210px;padding:clamp(16px,3vw,28px);background:var(--surface);display:flex;flex-direction:column;align-items:center;text-align:center;}
+.m-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,92,26,.1);border:1px solid rgba(255,92,26,.2);color:var(--accent);border-radius:50px;padding:4px 13px;font-family:var(--font-head);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:13px;}
+.m-price-row{display:flex;align-items:baseline;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:11px 15px;margin-bottom:18px;}
+.mpb{font-family:var(--font-head);font-size:1.7rem;font-weight:800;color:var(--accent);}
+.mps{font-size:.78rem;color:var(--muted);}
+.fg{margin-bottom:13px;}
+.fg label{display:block;font-size:.73rem;font-weight:600;color:var(--ink);margin-bottom:5px;}
+.fg input,.fg select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font-body);font-size:.85rem;background:var(--bg);color:var(--ink);outline:none;transition:border-color .2s;cursor:none;}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,92,26,.1);}
+.utr-f{background:#fffaf7;border-color:rgba(255,92,26,.3);font-weight:600;}
+.m-sub{width:100%;padding:12px;border-radius:50px;border:none;cursor:none;background:#25d366;color:#fff;font-family:var(--font-head);font-weight:700;font-size:.86rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-top:5px;}
+.m-sub:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(37,211,102,.32);}
+.qr-title{font-family:var(--font-head);font-weight:800;font-size:.88rem;margin-bottom:4px;}
+.qr-sub{font-size:.7rem;color:var(--muted);margin-bottom:13px;line-height:1.5;}
+.qr-frame{width:152px;height:152px;border-radius:11px;border:2px solid var(--border);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:11px;}
+.qr-frame img{width:100%;height:100%;object-fit:contain;}
+.qr-upi{font-size:.68rem;background:var(--card);border:1px dashed var(--border);border-radius:7px;padding:6px 9px;width:100%;text-align:center;font-weight:600;word-break:break-all;margin-top:7px;}
+.qr-steps{list-style:none;text-align:left;width:100%;border-top:1px solid var(--border);padding-top:11px;margin-top:7px;}
+.qr-steps li{display:flex;align-items:flex-start;gap:7px;font-size:.68rem;color:var(--muted);margin-bottom:7px;line-height:1.4;}
+.qn{width:16px;height:16px;border-radius:50%;background:var(--accent);color:#fff;font-size:.58rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+@media(max-width:560px){.mr{width:100%;border-top:1px solid var(--border);}.ml{border-right:none;}}
+
+/* enquiry */
+.enq-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:clamp(22px,4vw,44px);max-width:680px;box-shadow:var(--shadow);}
+.enq-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.fi,.fta,.fsel{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font-body);font-size:.85rem;background:var(--surface);color:var(--ink);outline:none;transition:border-color .2s;}
+.fi:focus,.fta:focus,.fsel:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,92,26,.1);}
+.fta{resize:vertical;min-height:86px;}
+.enq-btn{width:100%;padding:13px;border-radius:50px;border:none;cursor:none;background:var(--accent);color:#fff;font-family:var(--font-head);font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-top:8px;}
+.enq-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(255,92,26,.3);}
+.enq-ok{display:none;background:rgba(0,184,122,.1);border:1px solid rgba(0,184,122,.28);border-radius:11px;padding:13px 17px;margin-top:13px;color:var(--green);font-size:.86rem;font-weight:500;align-items:center;gap:8px;}
+.enq-ok.show{display:flex;}
+
+/* demo */
+#demo{background:var(--ink);color:#fff;}
+#demo .s-title{color:#fff;}
+#demo .s-sub{color:rgba(255,255,255,.45);}
+.demo-wrap{position:relative;width:100%;max-width:800px;margin:36px auto 0;cursor:none;border-radius:18px;overflow:hidden;box-shadow:0 28px 64px rgba(0,0,0,.5);transition:transform .3s;}
+.demo-wrap:hover{transform:translateY(-5px);}
+.demo-img{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a2535,#0d1117);display:flex;align-items:center;justify-content:center;position:relative;}
+.demo-img::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:28px 28px;}
+.play{width:76px;height:76px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;box-shadow:0 0 0 14px rgba(255,92,26,.14),0 0 0 28px rgba(255,92,26,.07);transition:transform .2s;}
+.demo-wrap:hover .play{transform:scale(1.1);}
+.demo-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent);padding:26px 22px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;}
+.demo-label span{font-family:var(--font-head);font-weight:700;font-size:.9rem;color:#fff;}
+.demo-label small{font-size:.74rem;color:rgba(255,255,255,.5);}
+.vlb{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:18px;}
+.vlb.open{display:flex;}
+.vwrap{position:relative;width:100%;max-width:880px;border-radius:13px;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,.6);}
+.vwrap iframe{display:block;width:100%;aspect-ratio:16/9;border:none;}
+.vlb-close{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.14);border:none;cursor:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:1.15rem;display:flex;align-items:center;justify-content:center;}
+.vlb-close:hover{background:rgba(255,255,255,.28);}
+
+/* contact */
+.contact-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:clamp(22px,4vw,44px);display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start;max-width:840px;box-shadow:var(--shadow);}
+.ci-row{display:flex;align-items:flex-start;gap:11px;margin-bottom:13px;}
+.cico{width:34px;height:34px;border-radius:8px;background:rgba(255,92,26,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.95rem;}
+.ci-row p{font-size:.83rem;color:var(--muted);padding-top:6px;}
+.wa-btn{display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#fff;font-family:var(--font-head);font-weight:700;padding:11px 22px;border-radius:50px;font-size:.86rem;transition:all .2s;margin-top:7px;}
+.wa-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(37,211,102,.3);}
+.qlink{display:block;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:.83rem;margin-bottom:8px;transition:border-color .2s;}
+.qlink:hover{border-color:var(--accent);}
+
+/* footer */
+footer{border-top:1px solid var(--border);padding:20px clamp(16px,5vw,60px);display:flex;flex-wrap:wrap;gap:11px;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+footer p{font-size:.78rem;color:var(--muted);}
+footer a{color:var(--accent);font-weight:500;}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.vis{opacity:1;transform:none;}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+
+/* divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+
+@media(max-width:768px){.hdr-links{display:none;}.ham{display:flex;}.enq-grid{grid-template-columns:1fr;}}
+@media(max-width:480px){.hero-cta{flex-direction:column;align-items:stretch;}.stats-bar{flex-direction:column;}.stat{border-right:none;border-bottom:1px solid var(--border);}.stat:last-child{border-bottom:none;}}
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="images/powercloud_bill_logo.png" alt="PowerCloud Bill"/>
+    <div class="logo-text">Power<span>Cloud</span> Bill</div>
+  </div>
+  <ul class="hdr-links" id="hdrLinks">
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#screenshots">Screenshots</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#enquiry">Support</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:11px;">
+    <a class="dl-btn" href="https://github.com/JyotiRanSwain/powercloud-bill/releases/download/v1.0.0/PowerCloudBillApp_Setup_v1.0.0.zip">⬇ Download</a>
+    <button class="ham" id="ham"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mob-nav" id="mnav">
+  <a href="#why">Why Us</a><a href="#features">Features</a>
+  <a href="#screenshots">Screenshots</a><a href="#pricing">Pricing</a>
+  <a href="#enquiry">Support</a><a href="#demo">Demo</a><a href="#contact">Contact</a>
+  <a href="https://github.com/JyotiRanSwain/powercloud-bill/releases/download/v1.0.0/PowerCloudBillApp_Setup_v1.0.0.zip">⬇ Download Free Trial</a>
+</div>
+
+<!-- SCROLL-DRIVEN 3D ANIMATION -->
+<div id="scroll-anim">
+  <div class="scroll-sticky">
+    <canvas id="billCanvas"></canvas>
+    <div class="hero-overlay" id="heroOverlay">
+      <div class="hero-badge"><span class="dot"></span>Version 1.0 — Now Available</div>
+      <h1 class="hero-h1">GST Billing <br> Made <span class="hi">Simple</span><br>for Indian <br> Business Firms</h1>
+      <p class="hero-p">Offline-first, fast & easy billing software for Windows. No internet needed, no monthly subscription headaches.</p>
+      <div class="hero-cta">
+        <a class="btn btn-dark" href="https://github.com/JyotiRanSwain/powercloud-bill/releases/download/v1.0.0/PowerCloudBillApp_Setup_v1.0.0.zip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Free Trial
+        </a>
+        <a class="btn btn-outline-w" href="#screenshots">View Screenshots →</a>
+      </div>
+      <div class="win-badge">
+        <svg width="15" height="15" viewBox="0 0 88 88" fill="#1a6fff"><path d="M0 12.4L36 7.6v34.9H0zm40-5.2L88 0v42.5H40zM0 45.5h36v34.9L0 75.6zm40 .5h48v42.5L40 83.4z"/></svg>
+        Windows 10 / 11 · Offline · No Subscription
+      </div>
+    </div>
+    <div class="scroll-hint" id="scrollHint">
+      <span>Scroll to explore</span>
+      <div class="scroll-arr"></div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="section" style="background:var(--surface);padding-top:40px;padding-bottom:40px;">
+  <div class="max-w center">
+    <div class="stats-bar reveal">
+      <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">Day Free Trial</div></div>
+      <div class="stat"><div class="stat-num">₹999</div><div class="stat-lbl">Per Year</div></div>
+      <div class="stat"><div class="stat-num">11+</div><div class="stat-lbl">Core Modules</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Offline Ready</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- WHY -->
+<section class="section" id="why">
+  <div class="max-w">
+    <div class="s-label">Why PowerCloud Bill?</div>
+    <h2 class="s-title">Built for the Way You Work</h2>
+    <p class="s-sub">Running a shop in India means handling GST, invoices, stock, and customers every day. We make all of it effortless.</p>
+    <div class="why-grid">
+      <div class="wcard reveal" data-n="01"><div class="wico">⚡</div><h3>Instant GST Invoices</h3><p>Create GST-compliant invoices in seconds. Tax is calculated automatically — no manual math, no errors.</p></div>
+      <div class="wcard reveal" data-n="02"><div class="wico">📶</div><h3>Works 100% Offline</h3><p>No internet? No problem. All your data stays on your computer. Power cuts won't stop your business.</p></div>
+      <div class="wcard reveal" data-n="03"><div class="wico">🪟</div><h3>Windows Native App</h3><p>A real desktop application for Windows 10 & 11. Fast, reliable, designed for daily shop use.</p></div>
+      <div class="wcard reveal" data-n="04"><div class="wico">📦</div><h3>Stock Management</h3><p>Track products, pricing, HSN codes, and inventory — all from one simple screen.</p></div>
+      <div class="wcard reveal" data-n="05"><div class="wico">🧾</div><h3>PDF Invoices</h3><p>Download and print professional invoice PDFs to share via WhatsApp or email.</p></div>
+      <div class="wcard reveal" data-n="06"><div class="wico">📊</div><h3>Sales Reports</h3><p>Monthly and yearly summaries help you understand your business performance at a glance.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="max-w">
+    <div class="s-label">Features</div>
+    <h2 class="s-title">Everything You Need to Run Your Shop</h2>
+    <p class="s-sub">11 powerful modules packed into one lightweight, easy-to-use application.</p>
+    <div class="feat-grid reveal">
+      <div class="fcard"><div class="fico">🏠</div><h3>Dashboard</h3><p>Total invoices, sales revenue, monthly graphs and performance at a glance.</p></div>
+      <div class="fcard"><div class="fico">📋</div><h3>Invoices</h3><p>View all invoices, search by customer, reprint or download PDF any time.</p></div>
+      <div class="fcard"><div class="fico">✏️</div><h3>New Invoice</h3><p>Create GST invoices with automatic CGST / SGST / IGST tax computation.</p></div>
+      <div class="fcard"><div class="fico">📦</div><h3>Products</h3><p>Manage product catalog, pricing, stock levels and HSN / SAC codes.</p></div>
+      <div class="fcard"><div class="fico">👤</div><h3>Customers</h3><p>Save customer details with GSTIN for quick, accurate billing every time.</p></div>
+      <div class="fcard"><div class="fico">🚚</div><h3>E-Way Bill</h3><p>Prepare all GST transportation data required for e-way bill generation.</p></div>
+      <div class="fcard"><div class="fico">📊</div><h3>Reports</h3><p>Sales reports, invoice summaries and monthly revenue breakdowns.</p></div>
+      <div class="fcard"><div class="fico">⚙️</div><h3>Settings</h3><p>Configure your GSTIN, business details, logo and invoice format.</p></div>
+      <div class="fcard"><div class="fico">🧾</div><h3>Dual GSTIN</h3><p>Register and manage two separate GST numbers with one user license.</p></div>
+      <div class="fcard"><div class="fico">📄</div><h3>Proforma Invoice</h3><p>Create and share proforma invoices for advance billing and approval.</p></div>
+      <div class="fcard"><div class="fico">☁️</div><h3>Google Backup</h3><p>Securely back up your data to Google Drive for safety and easy recovery.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCREENSHOTS -->
+<section class="section" id="screenshots" style="background:var(--surface);">
+  <div class="max-w">
+    <div class="s-label">Screenshots</div>
+    <h2 class="s-title">See It in Action</h2>
+    <p class="s-sub">Click any screenshot to zoom in and see the details.</p>
+    <div class="gallery">
+      <div class="gitem reveal" onclick="openLB('images/dashboard.png')"><img src="images/dashboard.png" alt="Dashboard"/><div class="gover"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      <div class="gitem reveal" onclick="openLB('images/invoice.png')"><img src="images/invoice.png" alt="Invoice"/><div class="gover"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+      <div class="gitem reveal" onclick="openLB('images/customers.png')"><img src="images/customers.png" alt="Customers"/><div class="gover"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div></div>
+    </div>
+  </div>
+</section>
+<div class="lb" id="lb" onclick="closeLB()"><button class="lb-close" onclick="closeLB()">✕</button><img id="lbImg" src="" alt="Screenshot"/></div>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="max-w">
+    <div class="center reveal">
+      <div class="s-label">Pricing</div>
+      <h2 class="s-title">Simple, Honest Pricing</h2>
+      <p class="s-sub">Try free for 7 days. No credit card needed. Upgrade when you're ready.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan reveal">
+        <div class="plan-name">Trial</div>
+        <div class="plan-price">Free</div>
+        <div class="plan-desc">7-day evaluation — no payment required</div>
+        <ul class="plan-perks"><li>All features included</li><li>7 days full access</li><li>No credit card needed</li></ul>
+        <a class="plan-cta" href="https://github.com/JyotiRanSwain/powercloud-bill/releases/download/v1.0.0/PowerCloudBillApp_Setup_v1.0.0.zip">Download Free</a>
+      </div>
+      <div class="plan pop reveal d1">
+        <div class="pop-badge">Most Popular</div>
+        <div class="plan-name">Annual</div>
+        <div class="plan-price">₹999 <sub>/ year</sub></div>
+        <div class="plan-desc">Best value for active shops</div>
+        <ul class="plan-perks"><li>All features unlocked</li><li>1 year license</li><li>Free updates</li><li>WhatsApp support</li></ul>
+        <button class="plan-cta" onclick="openBuyModal('Annual License','₹999 / year','annual')">Buy via WhatsApp</button>
+      </div>
+      <div class="plan reveal d2">
+        <div class="plan-name">Lifetime</div>
+        <div class="plan-price">₹5,999</div>
+        <div class="plan-desc">Pay once, use forever</div>
+        <ul class="plan-perks"><li>All features unlocked</li><li>Lifetime license</li><li>Free updates forever</li><li>Priority support</li></ul>
+        <button class="plan-cta" onclick="openBuyModal('Lifetime License','₹5,999 — one time','lifetime')">Buy via WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUY MODAL -->
+<div class="modal-bg" id="buyModal" onclick="handleMOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeBuyModal()">✕</button>
+    <div class="mcols">
+      <div class="ml">
+        <div class="m-badge" id="mBadge">📦 Annual License</div>
+        <h3 style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;margin-bottom:4px;">Complete Your Purchase</h3>
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:17px;line-height:1.5;">Scan the QR code to pay, then fill in your details and UTR number and send on WhatsApp.</p>
+        <div class="m-price-row"><div class="mpb" id="mPrice">₹999</div><div class="mps" id="mSub">/ year</div></div>
+        <div class="fg"><label>Full Name *</label><input type="text" id="bName" placeholder="e.g. Ramesh Kumar"/></div>
+        <div class="fg"><label>Address / City</label><input type="text" id="bAddr" placeholder="e.g. Salt Lake, Kolkata"/></div>
+        <div class="fg"><label>Email ID *</label><input type="email" id="bEmail" placeholder="yourname@email.com"/></div>
+        <div class="fg"><label>UTR / Transaction ID *</label><input type="text" id="bUTR" class="utr-f" placeholder="After payment — e.g. 425612345678"/></div>
+        <button class="m-sub" onclick="submitBuyModal()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.862L.054 23.5l5.805-1.522A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.895 0-3.663-.518-5.176-1.418l-.371-.22-3.444.903.919-3.352-.242-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Confirm & Send on WhatsApp
+        </button>
+      </div>
+      <div class="mr">
+        <div class="qr-title">Scan & Pay</div>
+        <div class="qr-sub">Use any UPI app to scan and pay the exact amount.</div>
+        <div class="qr-frame">
+          <img src="images/payment-qr.jpg" alt="UPI QR" onerror="this.style.display='none'">
+        </div>
+        <div style="font-size:.64rem;color:var(--muted);margin-bottom:2px;">UPI ID</div>
+        <div class="qr-upi">9776699638@ybl</div>
+        <ul class="qr-steps">
+          <li><span class="qn">1</span>Open PhonePe, GPay, Paytm or any UPI app</li>
+          <li><span class="qn">2</span>Tap Scan QR and scan the code above</li>
+          <li><span class="qn">3</span>Enter the exact amount and confirm payment</li>
+          <li><span class="qn">4</span>Note the UTR / Transaction ID shown</li>
+          <li><span class="qn">5</span>Paste UTR on the left and click Send</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENQUIRY -->
+<section class="section" id="enquiry" style="background:var(--surface);">
+  <div class="max-w">
+    <div class="s-label">Customer Support</div>
+    <h2 class="s-title">Have a Question? We're Here</h2>
+    <p class="s-sub">Submit your enquiry and our team will get back to you within 24 hours.</p>
+    <div class="enq-card reveal" style="margin-top:36px;">
+      <div class="enq-grid">
+        <div class="fg"><label style="font-size:.73rem;font-weight:600;display:block;margin-bottom:5px;">Your Name *</label><input class="fi" type="text" id="eName" placeholder="Full name"/></div>
+        <div class="fg"><label style="font-size:.73rem;font-weight:600;display:block;margin-bottom:5px;">Mobile Number *</label><input class="fi" type="tel" id="eMob" placeholder="+91 XXXXX XXXXX"/></div>
+        <div class="fg"><label style="font-size:.73rem;font-weight:600;display:block;margin-bottom:5px;">Email ID *</label><input class="fi" type="email" id="eEmail" placeholder="yourname@email.com"/></div>
+        <div class="fg"><label style="font-size:.73rem;font-weight:600;display:block;margin-bottom:5px;">Enquiry Type *</label>
+          <select class="fsel" id="eType"><option value="" disabled selected>— Select —</option><option>🔑 License Problem / Activation</option><option>🆕 Consultancy for New User</option><option>🎬 Request a Free Demo</option><option>🧾 GST & Invoice Help</option><option>🛠 Technical Support / Bug</option><option>💳 Billing & Payment Issue</option><option>💬 Other Enquiry</option></select>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:4px;"><label style="font-size:.73rem;font-weight:600;display:block;margin-bottom:5px;">Message (optional)</label><textarea class="fta" id="eMsg" placeholder="Describe your issue or question..."></textarea></div>
+      <button class="enq-btn" onclick="submitEnquiry()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send Enquiry via WhatsApp
+      </button>
+      <div class="enq-ok" id="enqOk">✅ &nbsp;Enquiry sent! We'll respond within 24 hours.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="section" id="demo">
+  <div class="max-w center">
+    <div class="s-label">Watch Demo</div>
+    <h2 class="s-title">See PowerCloud Bill in Action</h2>
+    <p class="s-sub">Watch our full walkthrough to see invoicing, stock management, and reports in action.</p>
+    <div class="demo-wrap reveal" onclick="openVLB('RqYxMTMkM3g')">
+      <div class="demo-img" style="background:url('https://img.youtube.com/vi/RqYxMTMkM3g/maxresdefault.jpg') center/cover no-repeat;">
+        <div class="play"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      </div>
+      <div class="demo-label">
+        <span>▶ &nbsp;PowerCloud Bill — Full Demo Walkthrough</span>
+        <small>Click to play video</small>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="vlb" id="vlb" onclick="handleVOverlay(event)">
+  <button class="vlb-close" onclick="closeVLB()">✕</button>
+  <div class="vwrap"><iframe id="vFrame" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>
+</div>
+
+<!-- CONTACT -->
+<section class="section" id="contact" style="background:var(--surface);">
+  <div class="max-w">
+    <div class="s-label">Contact</div>
+    <h2 class="s-title">Get in Touch</h2>
+    <p class="s-sub">Have a question before buying? Chat with us directly on WhatsApp.</p>
+    <div class="contact-card reveal" style="margin-top:32px;">
+      <div style="flex:1;min-width:210px;">
+        <h3 style="font-family:var(--font-head);font-weight:700;font-size:1.05rem;margin-bottom:14px;">PowerCloud</h3>
+        <div class="ci-row"><div class="cico">📍</div><p>Action Area I, Newtown<br>New Town, West Bengal 700107</p></div>
+        <div class="ci-row"><div class="cico">📞</div><p>+91 7008373783</p></div>
+        <div class="ci-row"><div class="cico">📧</div><p>info.powercloud@gmail.com</p></div>
+        <a class="wa-btn" href="https://wa.me/917008373783" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.862L.054 23.5l5.805-1.522A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.895 0-3.663-.518-5.176-1.418l-.371-.22-3.444.903.919-3.352-.242-.386A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Chat on WhatsApp
+        </a>
+      </div>
+      <div style="flex:1;min-width:210px;">
+        <h3 style="font-family:var(--font-head);font-weight:700;font-size:1rem;margin-bottom:14px;">Quick Links</h3>
+        <a class="qlink" href="../" target="_blank">🌐 Visit PowerCloud Website →</a>
+        <a class="qlink" href="https://github.com/JyotiRanSwain/powercloud-bill" target="_blank">💻 GitHub Repository →</a>
+        <a class="qlink" href="https://github.com/JyotiRanSwain/powercloud-bill/releases/download/v1.0.0/PowerCloudBillApp_Setup_v1.0.0.exe" target="_blank">⬇ Download Installer (.exe) →</a>
+        <a class="qlink" href="https://www.instagram.com/powercloud_india?igsh=MWJpaGIzNHU2ZGswcw%3D%3D&utm_source=qr" target="_blank">📸 Follow on Instagram →</a>
+        <a class="qlink" href="https://www.facebook.com/profile.php?id=61591179590562" target="_blank">👍 Follow on Facebook →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 PowerCloud Bill. All rights reserved. | <a href="./">PowerCloud</a> · Made in India 🇮🇳</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <a href="https://www.instagram.com/powercloud_india?igsh=MWJpaGIzNHU2ZGswcw%3D%3D&utm_source=qr" target="_blank" style="color:var(--accent);">📸 Instagram</a>
+    <a href="https://www.facebook.com/profile.php?id=61591179590562" target="_blank" style="color:var(--accent);">👍 Facebook</a>
+    <a href="https://www.youtube.com/@PowerCloud-cn6yg" target="_blank" style="color:var(--accent);">▶ YouTube</a>
+  </div>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,input,select,textarea').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('hovered'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('hovered'));
+});
+
+/* ── MOBILE NAV ── */
+document.getElementById('ham').addEventListener('click',()=>document.getElementById('mnav').classList.toggle('open'));
+document.querySelectorAll('#mnav a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mnav').classList.remove('open')));
+
+/* ── SCROLL-DRIVEN FRAME ANIMATION (frames 025-052 = 28 frames) ── */
+(function(){
+  const canvas=document.getElementById('billCanvas');
+  const ctx=canvas.getContext('2d');
+  const TOTAL=52,START=1;
+  const frames=[];
+  let loaded=0,currentFrame=0;
+
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',()=>{resize();drawFrame(currentFrame);});
+
+  function drawFrame(i) {
+    const f = frames[i];
+
+    if (!f || !f.complete || f.naturalWidth === 0) {
+        ctx.fillStyle = '#0d1117';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const fw = f.naturalWidth;
+    const fh = f.naturalHeight;
+
+    // Fill entire screen
+    const scale = Math.max(cw / fw, ch / fh);
+
+    const dw = fw * scale;
+    const dh = fh * scale;
+    const dx = (cw - dw) / 2;
+    const dy = (ch - dh) / 2;
+
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(f, dx, dy, dw, dh);
+}
+
+  for(let i=0;i<TOTAL;i++){
+    const img=new Image();
+    img.src=`images/ezgif-frame-${String(START+i).padStart(3,'0')}.jpg`;
+    img.onload=img.onerror=()=>{loaded++;if(loaded===1)drawFrame(0);};
+    frames.push(img);
+  }
+
+  const section=document.getElementById('scroll-anim');
+  const overlay=document.getElementById('heroOverlay');
+  const hint=document.getElementById('scrollHint');
+
+  function onScroll(){
+    const rect=section.getBoundingClientRect();
+    const sectionH=section.offsetHeight-window.innerHeight;
+    const scrolled=Math.max(0,-rect.top);
+    const progress=Math.min(1,scrolled/sectionH);
+    const frame=Math.min(TOTAL-1,Math.floor(progress*(TOTAL-1)));
+    if(frame!==currentFrame){currentFrame=frame;drawFrame(currentFrame);}
+    overlay.style.opacity=Math.max(0,1-progress*5);
+    hint.style.opacity=Math.max(0,1-progress*8);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  setTimeout(()=>{if(frames[0].complete)drawFrame(0);},200);
+})();
+
+/* ── REVEAL ── */
+const obs=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('vis'),i*70);obs.unobserve(e.target);}}),{threshold:.08});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+/* ── IMAGE LB ── */
+function openLB(src){document.getElementById('lbImg').src=src;document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
+function closeLB(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+
+/* ── BUY MODAL ── */
+let curPlan={};
+function openBuyModal(name,price,key){
+  curPlan={name,price,key};
+  document.getElementById('mBadge').textContent='📦 '+name;
+  const pts=price.split('—')[0].split('/');
+  document.getElementById('mPrice').textContent=pts[0].trim();
+  document.getElementById('mSub').textContent=pts.length>1?'/ '+pts[1].trim():'';
+  ['bName','bAddr','bEmail','bUTR'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('buyModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeBuyModal(){document.getElementById('buyModal').classList.remove('open');document.body.style.overflow='';}
+function handleMOverlay(e){if(e.target===document.getElementById('buyModal'))closeBuyModal();}
+function submitBuyModal(){
+  const name=document.getElementById('bName').value.trim();
+  const addr=document.getElementById('bAddr').value.trim();
+  const email=document.getElementById('bEmail').value.trim();
+  const utr=document.getElementById('bUTR').value.trim();
+  if(!name||!email){alert('Please fill in your name and email.');return;}
+  if(!utr){alert('Please enter your UTR / Transaction ID after completing payment.');return;}
+  const msg=encodeURIComponent('🛒 *New Purchase — PowerCloud Bill*\n\n📦 Plan: '+curPlan.name+'\n💰 Price: '+curPlan.price+'\n\n👤 Name: '+name+'\n📍 Address: '+(addr||'Not provided')+'\n📧 Email: '+email+'\n🔖 UTR: '+utr+'\n\nPayment done. Please activate my license. Thank you!');
+  closeBuyModal();window.open('https://wa.me/917008373783?text='+msg,'_blank');
+}
+
+/* ── ENQUIRY ── */
+function submitEnquiry(){
+  const name=document.getElementById('eName').value.trim();
+  const mob=document.getElementById('eMob').value.trim();
+  const email=document.getElementById('eEmail').value.trim();
+  const type=document.getElementById('eType').value;
+  const msg=document.getElementById('eMsg').value.trim();
+  if(!name||!mob||!email||!type){alert('Please fill in all required fields.');return;}
+  const wa=encodeURIComponent('📩 *Customer Enquiry — PowerCloud Bill*\n\n👤 Name: '+name+'\n📞 Mobile: '+mob+'\n📧 Email: '+email+'\n🏷 Type: '+type+(msg?'\n💬 Message: '+msg:'')+'\n\nPlease assist. Thank you!');
+  document.getElementById('enqOk').classList.add('show');
+  ['eName','eMob','eEmail','eMsg'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('eType').value='';
+  setTimeout(()=>document.getElementById('enqOk').classList.remove('show'),5000);
+  window.open('https://wa.me/917008373783?text='+wa,'_blank');
+}
+
+/* ── VIDEO LB ── */
+function openVLB(id){
+  document.getElementById('vFrame').src='https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0';
+  document.getElementById('vlb').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeVLB(){document.getElementById('vFrame').src='';document.getElementById('vlb').classList.remove('open');document.body.style.overflow='';}
+function handleVOverlay(e){if(e.target===document.getElementById('vlb'))closeVLB();}
+
+/* ── ESC ── */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLB();closeBuyModal();closeVLB();}});
+</script>
+</body>
+</html>
