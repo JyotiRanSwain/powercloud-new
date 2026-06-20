@@ -65,8 +65,55 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 }
 
 /* hero overlay text — fades as you scroll */
-.hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;pointer-events:none;z-index:10;transition:opacity .1s;}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:rgba(79,127,255,.1);border:1px solid rgba(79,127,255,.22);font-size:.73rem;font-weight:600;color:var(--accent);margin-bottom:22px;font-family:var(--font-head);letter-spacing:.1em;text-transform:uppercase;}
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    text-align: center;
+
+    padding-top: 120px;
+
+    pointer-events: none;
+    z-index: 20;
+
+    transition: opacity 0.1s ease;
+}
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 16px;
+    margin-bottom: 20px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    color: #7db8ff;
+    background: rgba(38, 99, 255, 0.12);
+
+    border: 1px solid rgba(125, 184, 255, 0.25);
+    border-radius: 999px;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    position: relative;
+    z-index: 10;
+
+    /* keep eyebrow compact and avoid overlapping navbar on small screens */
+    max-width: calc(100% - 48px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .pulse-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pdot 2s infinite;}
 @keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(79,127,255,.4);}50%{opacity:.5;box-shadow:0 0 0 7px rgba(79,127,255,0);}}
 .hero-title{font-family:var(--font-head);font-size:clamp(2.2rem,5vw,4rem);font-weight:800;line-height:1.08;color:var(--white);margin-bottom:18px;text-shadow:0 4px 32px rgba(0,0,0,.6);}
@@ -229,7 +276,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
 .footer-bottom p{color:var(--muted);font-size:.8rem;}
 .soc-row{display:flex;gap:9px;}
 .soc{width:34px;height:34px;border-radius:8px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .2s;color:var(--muted);}
-.soc:hover{border-color:var(--accent);color:var(--accent);}
+.soc:hover{border-color:var(--accent);color:var(--accent);} 
+/* Ensure SVG icons inherit color */
+.soc svg{width:18px;height:18px;display:block;fill:currentColor}
 
 /* divider */
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
@@ -247,6 +296,20 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
   .ham{display:flex;}
   .cta-banner{text-align:center;justify-content:center;}
   .stats-row{grid-template-columns:repeat(2,1fr);}
+
+  /* Make hero content fit smaller desktop / laptop heights and mobile */
+  .hero-overlay{padding-top:68px;padding-left:20px;padding-right:20px;align-items:flex-start;}
+  .hero-title{font-size:clamp(1.6rem,6vw,2.6rem);text-align:center;}
+  .hero-sub{max-width:100%;font-size:.95rem;margin-bottom:18px;}
+  .hero-chips{justify-content:center;}
+  .hero-btns{flex-direction:column;gap:10px;}
+  .hero-btns .btn{width:100%;justify-content:center;padding:10px 16px;font-size:.9rem;}
+}
+
+/* Short viewport height (small laptops / 13" screens) */
+@media (max-height:900px){
+  .hero-overlay{padding-top:56px;}
+  .hero-scroll-hint{bottom:22px;}
 }
 @media(max-width:560px){.section{padding:64px 0;}.footer-grid{grid-template-columns:1fr;}.fg2{grid-template-columns:1fr;}}
 </style>
@@ -300,7 +363,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
     <!-- Hero text overlay -->
     <div class="hero-overlay" id="heroOverlay">
       <div class="hero-eyebrow"><span class="pulse-dot"></span>PowerCloud Bill App v2.0 — Now Live</div>
-      <h1 class="hero-title">Affordable <span class="grad">Software <br>& Cloud</span><br>Solutions <br> for Small Businesses</h1>
+      <h1 class="hero-title">Affordable <br><span class="grad">Software & Cloud</span><br>Solutions <br> for Small Businesses</h1>
       <p class="hero-sub">From GST billing to full AWS cloud infrastructure — we help Indian businesses go digital at prices they can actually afford.</p>
       <div class="hero-chips">
         <span class="chip">✅ GST Billing</span>
@@ -513,8 +576,20 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
       <div class="fcol"><h4>Company</h4><ul><li><a href="#about">About Us</a></li><li><a href="#product">Our Product</a></li><li><a href="#testimonials">Clients</a></li><li><a href="#learning">Resources</a></li><li><a href="#contact">Contact</a></li></ul></div>
       <div class="fcol"><h4>Follow Us</h4><ul>
         <li><a href="https://www.youtube.com/@PowerCloud-cn6yg" target="_blank">▶ YouTube</a></li>
-        <li><a href="https://www.instagram.com/powercloud_india?igsh=MWJpaGIzNHU2ZGswcw%3D%3D&utm_source=qr" target="_blank">📸 Instagram</a></li>
-        <li><a href="https://www.facebook.com/profile.php?id=61591179590562" target="_blank">👍 Facebook</a></li>
+        <li><a href="https://www.instagram.com/powercloud_india?igsh=MWJpaGIzNHU2ZGswcw%3D%3D&utm_source=qr" target="_blank" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:8px;">
+            <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" />
+          </svg>
+          Instagram
+        </a></li>
+        <li><a href="https://www.facebook.com/profile.php?id=61591179590562" target="_blank" aria-label="Facebook">
+          <svg width="12" height="18" viewBox="0 0 12 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:8px;">
+            <path d="M9.5 0H7.5C5.5 0 4 1.5 4 3.7V5.5H2.2C1 5.5 0 6.5 0 7.7V10.3C0 11.5 1 12.5 2.2 12.5H4V18H6.9V12.5H9.2L9.8 10.3H6.9V8.3C6.9 7.7 7.1 7.2 8.1 7.2H9.8V4.5H8.1C6.4 4.5 6 5.6 6 6.8V10.3H9.5V0Z" fill="currentColor"/>
+          </svg>
+          Facebook
+        </a></li>
         <li><a href="mailto:info.powercloud@gmail.com">📧 Email Us</a></li>
         <li><a href="powercloud-bill-app/" target="_blank">⬇ Download App</a></li>
       </ul></div>
@@ -522,9 +597,15 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
     <div class="footer-bottom">
       <p>© 2026 PowerCloud. Made with ❤️ in India 🇮🇳 | Built by PowerCloud — DevOps & AWS Engineer</p>
       <div class="soc-row">
-        <a href="https://www.youtube.com/@PowerCloud-cn6yg" class="soc" target="_blank">▶</a>
-        <a href="https://www.instagram.com/powercloud_india?igsh=MWJpaGIzNHU2ZGswcw%3D%3D&utm_source=qr" class="soc" target="_blank">📸</a>
-        <a href="https://www.facebook.com/profile.php?id=61591179590562" class="soc" target="_blank">👍</a>
+        <a href="https://www.youtube.com/@PowerCloud-cn6yg" class="soc" target="_blank" aria-label="YouTube"> 
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M23.5 6.2s-.2-1.6-.8-2.3c-.7-.9-1.6-.9-2.0-1.0C17.6 2.5 12 2.5 12 2.5s-5.6 0-8.7.4c-.4.1-1.4.1-2.0 1C.7 4.6.5 6.2.5 6.2S.2 8 .2 9.9v1.6C.2 13.9.5 15.7.5 15.7s.2 1.6.8 2.3c.7.9 1.6.9 2 .9 1.5.1 6.3.4 8.5.4s5.6-.3 8.7-.7c.4-.1 1.4-.1 2-.9.6-.7.8-2.3.8-2.3s.3-1.8.3-3.7v-1.6c0-1.9-.3-3.7-.3-3.7zM9.6 14.1V7.8l5.8 3.2-5.8 3.1z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/powercloud_india?igsh=MWJpaGIzNHU2ZGswcw%3D%3D&utm_source=qr" class="soc" target="_blank" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor"/></svg>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61591179590562" class="soc" target="_blank" aria-label="Facebook">
+          <svg viewBox="0 0 12 18" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 0H7.5C5.5 0 4 1.5 4 3.7V5.5H2.2C1 5.5 0 6.5 0 7.7V10.3C0 11.5 1 12.5 2.2 12.5H4V18H6.9V12.5H9.2L9.8 10.3H6.9V8.3C6.9 7.7 7.1 7.2 8.1 7.2H9.8V4.5H8.1C6.4 4.5 6 5.6 6 6.8V10.3H9.5V0Z" fill="currentColor"/></svg>
+        </a>
         <a href="https://wa.me/917008373783" class="soc" target="_blank">💬</a>
         <a href="mailto:info.powercloud@gmail.com" class="soc">✉</a>
       </div>
