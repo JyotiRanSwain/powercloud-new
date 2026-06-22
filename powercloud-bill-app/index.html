@@ -248,6 +248,19 @@ footer a{color:var(--accent);font-weight:500;}
   .hero-h1{font-size:clamp(1.6rem,6vw,2.6rem)}
   .hero-p{max-width:100%}
 }
+@media (max-width: 576px) {
+  /* Hide the text inside the download button, leaving only the icon */
+  header .dl-btn {
+    font-size: 1.2rem; /* Make the icon slightly larger if needed */
+    padding: 8px 12px; /* Make it a square/compact button */
+  }
+  
+  /* If the text is hardcoded, you can hide the text node by setting a max-width, 
+     or wrap the text "Download" in a <span> inside your HTML like <span>Download</span> and do: */
+  header .dl-btn span {
+    display: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -271,7 +284,7 @@ footer a{color:var(--accent);font-weight:500;}
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:11px;">
-    <a class="dl-btn" href="https://github.com/JyotiRanSwain/powercloud-bill/releases/download/v1.0.0/PowerCloudBillApp_Setup_v1.0.0.zip">⬇ Download</a>
+    <a class="dl-btn" href="...">⬇ <span>Download</span></a>
     <button class="ham" id="ham"><span></span><span></span><span></span></button>
   </div>
 </header>
