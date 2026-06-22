@@ -66,53 +66,61 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
 /* hero overlay text — fades as you scroll */
 .hero-overlay {
-    position: absolute;
-    inset: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centers the whole block vertically on desktop */
+  text-align: center;
+  z-index: 10;
+}
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-
-    text-align: center;
-
-    padding-top: 120px;
-
-    pointer-events: none;
-    z-index: 20;
-
-    transition: opacity 0.1s ease;
+.hero-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+  /* Gives a natural gap between the header menu and the text elements */
+  margin-top: 10px; 
 }
 .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  /* Creates the gap exactly between menu bar above and the H1 below */
+  margin-bottom: 24px; 
+}
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  .hero-content-wrapper {
+    /* Large top margin to push down the layout safely past your mobile header/logo */
+    margin-top: 10px; 
+  }
+  
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    margin-bottom: 16px; /* slightly tighter spacing on smaller screens */
+  }
 
-    padding: 8px 16px;
-    margin-bottom: 20px;
-
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-
-    color: #7db8ff;
-    background: rgba(38, 99, 255, 0.12);
-
-    border: 1px solid rgba(125, 184, 255, 0.25);
-    border-radius: 999px;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    position: relative;
-    z-index: 10;
-
-    /* keep eyebrow compact and avoid overlapping navbar on small screens */
-    max-width: calc(100% - 48px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .hero-title {
+    font-size: 2.2rem; /* scale down the font if necessary to prevent wrapping overflow */
+    line-height: 1.2;
+  }
 }
 .pulse-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pdot 2s infinite;}
 @keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(79,127,255,.4);}50%{opacity:.5;box-shadow:0 0 0 7px rgba(79,127,255,0);}}
@@ -360,23 +368,34 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
 <div id="scroll-anim" id="top">
   <div class="scroll-sticky">
     <canvas id="mainCanvas"></canvas>
-    <!-- Hero text overlay -->
+    
     <div class="hero-overlay" id="heroOverlay">
-      <div class="hero-eyebrow"><span class="pulse-dot"></span>PowerCloud Bill App v2.0 — Now Live</div>
-      <h1 class="hero-title">Affordable <br><span class="grad">Software & Cloud</span><br>Solutions <br> for Small Businesses</h1>
-      <p class="hero-sub">From GST billing to full AWS cloud infrastructure — we help Indian businesses go digital at prices they can actually afford.</p>
-      <div class="hero-chips">
-        <span class="chip">✅ GST Billing</span>
-        <span class="chip">☁️ AWS & DevOps</span>
-        <span class="chip">🌐 Web Development</span>
-        <span class="chip">📱 Android Apps</span>
-        <span class="chip">💻 Custom Software</span>
-      </div>
-      <div class="hero-btns">
-        <a href="powercloud-bill-app/" class="btn btn-primary" target="_blank">⬇ Download Billing App</a>
-        <a href="#contact" class="btn btn-ghost">📞 Free Consultation</a>
+      <div class="hero-content-wrapper">
+        
+        <div class="hero-eyebrow">
+          <span class="pulse-dot"></span>PowerCloud Bill App v2.0 — Now Live
+        </div>
+        
+        <h1 class="hero-title">Affordable <br><span class="grad">Software & Cloud</span><br>Solutions <br> for Small Businesses</h1>
+        <p class="hero-sub">From GST billing to full AWS cloud infrastructure — we help Indian businesses go digital at prices they can actually afford.</p>
+        
+        <div class="hero-chips">
+          <span class="chip">✅ GST Billing</span>
+          <span class="chip">☁️ AWS & DevOps</span>
+          <span class="chip">🌐 Web Development</span>
+          <span class="chip">📱 Android Apps</span>
+          <span class="chip">💻 Custom Software</span>
+        </div>
+        
+        <div class="hero-btns">
+          <a href="powercloud-bill-app/" class="btn btn-primary" target="_blank">⬇ Download Billing App</a>
+          <a href="#contact" class="btn btn-ghost">📞 Free Consultation</a>
+        </div>
+        
       </div>
     </div>
+  </div>
+</div>
     <!-- scroll hint -->
     <div class="hero-scroll-hint" id="scrollHint">
       <span>Scroll to explore</span>
@@ -411,7 +430,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
       <div class="reveal d1">
         <div class="s-label">About Us</div>
         <h2 class="s-title">Built by an Engineer,<br>Made for Businesses</h2>
-        <p class="s-sub">I am a DevOps & AWS Engineer with hands-on experience building cloud infrastructure, automating deployments, and creating software that solves real business problems for small businesses across India.</p>
+        <p class="s-sub">PowerCloud was founded to bridge the gap between quality technology and affordability, making professional digital solutions accessible to small businesses, startups, and freelancers. With expertise in cloud computing, DevOps, web development, and software solutions, we help businesses build a strong digital presence and operate more efficiently in an increasingly connected world.</p>
         <div class="tech-pills">
           <span class="tpill">☁️ AWS Cloud</span><span class="tpill">🔧 DevOps & CI/CD</span>
           <span class="tpill">🐳 Docker</span><span class="tpill">💻 Desktop Apps</span>
@@ -633,7 +652,7 @@ document.querySelectorAll('#mmenu a').forEach(a=>a.addEventListener('click',()=>
 (function(){
   const canvas = document.getElementById('mainCanvas');
   const ctx = canvas.getContext('2d');
-  const TOTAL = 51;
+  const TOTAL = 215;
   const frames = [];
   let currentFrame = 0;
 
