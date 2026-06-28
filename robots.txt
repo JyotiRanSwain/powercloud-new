@@ -1,0 +1,7 @@
+```txt
+User-agent: *
+
+Allow: /
+
+Sitemap: https://powercloud.in/sitemap.xml
+```
