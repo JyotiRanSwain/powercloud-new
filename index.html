@@ -373,6 +373,95 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
   .hero-scroll-hint{bottom:22px;}
 }
 @media(max-width:560px){.section{padding:64px 0;}.footer-grid{grid-template-columns:1fr;}.fg2{grid-template-columns:1fr;}}
+
+
+/* Outer Container for Horizontal Scroll */
+  .testi-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 12px; /* Space for the scrollbar */
+    -webkit-overflow-scrolling: touch;
+    
+    /* Custom Scrollbar for Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary, #0070f3) rgba(255, 255, 255, 0.08);
+  }
+
+  /* Custom Scrollbar Styling (Chrome, Safari, Edge, Opera) */
+  .testi-scroll-container::-webkit-scrollbar {
+    height: 8px; /* Height of horizontal scrollbar */
+    display: block; /* Ensures scrollbar is visible */
+  }
+
+  .testi-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08); /* Background track */
+    border-radius: 10px;
+  }
+
+  .testi-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--primary, #0070f3); /* Scrollbar thumb color */
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .testi-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3; /* Darker shade when user hovers over the bar */
+  }
+
+  /* Grid Container */
+  .testi-grid {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    padding: 0 10px;
+  }
+
+  /* Testimonial Card Desktop Default */
+  .tcard {
+    flex: 0 0 380px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Logo & Avatar Styling */
+  .tavatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #00a2ff;
+    flex-shrink: 0;
+  }
+
+  .tlogo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* MOBILE RESPONSIVE MEDIA QUERY */
+  @media (max-width: 768px) {
+    .testi-scroll-container::-webkit-scrollbar {
+      height: 5px; /* Slightly thinner bar on mobile */
+    }
+
+    .tcard {
+      flex: 0 0 82vw;
+      max-width: 320px;
+      padding: 20px;
+    }
+
+    .ttext {
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -693,19 +782,65 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
 <!-- TESTIMONIALS -->
 <section id="testimonials" class="section" style="background:var(--surface);">
   <div class="container">
-    <div class="center reveal"><div class="s-label">Happy Clients</div><h2 class="s-title">Trusted by Real Businesses</h2><p class="s-sub">We've helped local businesses across India go digital. Here's what they say.</p></div>
-    <div class="testi-grid">
-      <div class="tcard reveal">
-        <div class="stars">★★★★★</div>
-        <div class="ttext">"PowerCloud built our dental care website exactly how we envisioned it. Clean, professional, and patients love finding us online now. The whole process was smooth and affordable."</div>
-        <div class="tauthor"><div class="tavatar">SD</div><div><div class="tname">Swarna Dental Care</div><div class="trole">Dental Clinic, Odisha</div></div></div>
-        <a href="https://jyotiranswain.github.io/swarna-dental-care/" class="tlink" target="_blank">🔗 View Website →</a>
-      </div>
-      <div class="tcard reveal d1">
-        <div class="stars">★★★★★</div>
-        <div class="ttext">"Our food brand needed an online presence and PowerCloud delivered a beautiful website. Customer orders and inquiries have increased significantly since launch. Highly recommended!"</div>
-        <div class="tauthor"><div class="tavatar">KF</div><div><div class="tname">Kirav Food Tech</div><div class="trole">Food & Beverage Brand</div></div></div>
-        <a href="https://kiravfoodtech.com/" class="tlink" target="_blank">🔗 View Website →</a>
+    <div class="center reveal">
+      <div class="s-label">Happy Clients</div>
+      <h2 class="s-title">Trusted by Real Businesses</h2>
+      <p class="s-sub">We've helped local businesses across India go digital. Here's what they say.</p>
+    </div>
+
+    <!-- Horizontal Scroll Container with Visible Bar -->
+    <div class="testi-scroll-container" id="testiScrollContainer">
+      <div class="testi-grid">
+        
+        <!-- Card 1 -->
+        <div class="tcard reveal">
+          <div class="stars">★★★★★</div>
+          <div class="ttext">"PowerCloud built our dental care website exactly how we envisioned it. Clean, professional, and patients love finding us online now. The whole process was smooth and affordable."</div>
+          <div class="tauthor">
+            <div class="tavatar">
+              <img src="./images/sd_logo.png" alt="Swarna Dental Care Logo" class="tlogo">
+            </div>
+            <div>
+              <div class="tname">Swarna Dental Care</div>
+              <div class="trole">Dental Clinic, Odisha</div>
+            </div>
+          </div>
+          <a href="https://jyotiranswain.github.io/swarna-dental-care/" class="tlink" target="_blank">🔗 View Website →</a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="tcard reveal d1">
+          <div class="stars">★★★★★</div>
+          <div class="ttext">"Our food brand needed an online presence and PowerCloud delivered a beautiful website. Customer orders and inquiries have increased significantly since launch. Highly recommended!"</div>
+          <div class="tauthor">
+            <div class="tavatar">
+              <img src="./images/kft_logo.png" alt="Kirav Food Tech Logo" class="tlogo">
+            </div>
+            <div>
+              <div class="tname">Kirav Food Tech</div>
+              <div class="trole">Food & Beverage Brand</div>
+            </div>
+          </div>
+          <a href="https://kiravfoodtech.com/" class="tlink" target="_blank">🔗 View Website →</a>
+        </div>
+
+        <!-- Card 3 -->
+
+        <div class="tcard reveal">
+          <div class="stars">★★★★★</div>
+          <div class="ttext">"PowerCloud created a modern and professional real estate website for Aion Realcon that perfectly represents our brand. The website looks impressive, is easy to navigate, and gives our property projects the online presence they deserve. Great service and a smooth experience from start to finish."</div>
+          <div class="tauthor">
+            <div class="tavatar">
+              <img src="./images/ar_logo.png" alt="Aion Realcon Logo" class="tlogo">
+            </div>
+            <div>
+              <div class="tname">Aion Realcon</div>
+              <div class="trole">Real Estate, Odisha</div>
+            </div>
+          </div>
+          <a href="https://aionrealcon.com/" class="tlink" target="_blank">🔗 View Website →</a>
+        </div>
+
       </div>
     </div>
   </div>
@@ -977,6 +1112,43 @@ function handleForm(btn){
   btn.textContent='✅ Sent! We will reply shortly.';
   setTimeout(()=>{btn.textContent='🚀 Book Free Consultation';},4000);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("testiScrollContainer");
+    let scrollAmount = 0;
+    const speed = 1; // Speed of scroll
+    let autoScrollTimer = null;
+
+    function startAutoScroll() {
+      // Don't duplicate timers
+      if (autoScrollTimer) return;
+      
+      autoScrollTimer = setInterval(() => {
+        container.scrollLeft += speed;
+
+        // Reset scroll when reaching the end
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 1) {
+          container.scrollLeft = 0;
+        }
+      }, 20);
+    }
+
+    function stopAutoScroll() {
+      clearInterval(autoScrollTimer);
+      autoScrollTimer = null;
+    }
+
+    // Start auto scroll on page load
+    startAutoScroll();
+
+    // Pause when user hovers, touches, or uses the scrollbar
+    container.addEventListener("mouseenter", stopAutoScroll);
+    container.addEventListener("mouseleave", startAutoScroll);
+    container.addEventListener("touchstart", stopAutoScroll);
+    container.addEventListener("touchend", startAutoScroll);
+    container.addEventListener("mousedown", stopAutoScroll); // Pauses auto scroll when clicking/dragging the bar
+  });
+
 </script>
 </body>
 </html>
