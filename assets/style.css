@@ -96,3 +96,11 @@ footer .bt2 b{color:#fff}footer .bt2 small{color:#a9bbdc}
 @media(max-width:900px){.vh{height:calc(100vh - 70px);height:calc(100svh - 70px);min-height:500px}.ov{background:rgba(2,18,46,.72)}.vh .tx{text-align:center;margin:0 auto}.vh .bt{justify-content:center}}
 input[type=file]{padding:10px;background:#fff;border-style:dashed;cursor:pointer}.lk{gap:24px}
 @media(max-width:1100px) and (min-width:901px){.nb{display:none}.lk{gap:18px}}
+
+
+.ck{display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:var(--mu);line-height:1.5;cursor:pointer;background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:12px 14px;transition:border-color .2s,background .2s}
+.ck input{width:18px;height:18px;margin-top:3px;flex-shrink:0;accent-color:var(--ac)}
+.ck a{color:var(--ac);text-decoration:underline}
+.ck:hover{border-color:var(--ac)}
+.ck:has(input:checked){border-color:var(--ac);background:var(--sf)}
+.nt{font-size:.78rem;color:var(--mu);background:var(--sf);border-radius:10px;padding:10px 12px;line-height:1.5}
